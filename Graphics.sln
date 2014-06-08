@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "Graphics\Graphics.vcxproj", "{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HierarchicalModeling", "HierarchicalModeling\HierarchicalModeling.vcxproj", "{EB4ACEF4-8EC3-43BC-84AC-C3B23004739D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F} = {B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}.Debug|Win32.Build.0 = Debug|Win32
+		{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}.Release|Win32.ActiveCfg = Release|Win32
+		{B9D58CD0-AF45-45AF-A1D3-F6AF176C647F}.Release|Win32.Build.0 = Release|Win32
+		{EB4ACEF4-8EC3-43BC-84AC-C3B23004739D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EB4ACEF4-8EC3-43BC-84AC-C3B23004739D}.Debug|Win32.Build.0 = Debug|Win32
+		{EB4ACEF4-8EC3-43BC-84AC-C3B23004739D}.Release|Win32.ActiveCfg = Release|Win32
+		{EB4ACEF4-8EC3-43BC-84AC-C3B23004739D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
