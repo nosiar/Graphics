@@ -21,6 +21,9 @@ namespace nosiar
 
         virtual void init() {};
         virtual void draw() {};
+        virtual void tick() {};
+
+        void draw_axis();
 
     private:
         void display();
@@ -30,7 +33,7 @@ namespace nosiar
         void mouse(int button, int state, int x, int y);
         void clamp_angles();
 
-    private:
+    protected:
         enum class Mouse_button : char {
             none = -1,
             left = GLUT_LEFT_BUTTON,
@@ -49,6 +52,9 @@ namespace nosiar
 
         int prev_mouse_x;
         int prev_mouse_y;
+        
+        int width;
+        int height;
 
         std::array<float, 3> eye;
         std::array<float, 3> rotation_angles;

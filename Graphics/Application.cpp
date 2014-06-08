@@ -26,6 +26,8 @@ namespace nosiar
         glutMotionFunc(motion);
 
         glutMainLoop();
+
+        finalize();
     }
 
     void Application::finalize()

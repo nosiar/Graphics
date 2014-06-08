@@ -4,8 +4,25 @@ namespace nosiar
 {
     Viewer_base::Viewer_base()
         : mouse_button{ Mouse_button::none }, modifier{ Modifier::none }
-        , eye({ 0.0f, 0.0f, 10.0f }), rotation_angles({ 0.0f, 0.0f, 0.0f })
+        , eye({ 0.0f, 0.0f, 30.0f }), rotation_angles({ 0.0f, 0.0f, 0.0f })
     {
+    }
+
+    void Viewer_base::draw_axis()
+    {
+        glBegin(GL_LINES);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(12.0f, 0.0f, 0.0f);
+
+        glColor3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 12.0f, 0.0f);
+
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 12.0f);
+        glEnd();
     }
 
     void Viewer_base::display()
@@ -38,16 +55,21 @@ namespace nosiar
 
     void Viewer_base::reshape(int w, int h)
     {
+        width = w;
+        height = h;
+
         glViewport(0, 0, w, h);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluPerspective(45.0f, (GLfloat)w / (GLfloat)h, .1f, 100.0f);
+        gluPerspective(45.0f, (GLfloat)w / (GLfloat)h, .1f, 500.0f);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }
 
     void Viewer_base::idle()
     {
+        tick();
+
         glutPostRedisplay();
     }
 
@@ -71,7 +93,7 @@ namespace nosiar
             }
             break;
         case Mouse_button::right:
-            eye[2] -= (prev_mouse_y - y) * 0.05f;
+            eye[2] -= (prev_mouse_y - y) * 0.2f;
             break;
         default:
             break;
