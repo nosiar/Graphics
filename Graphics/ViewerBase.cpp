@@ -31,15 +31,15 @@ namespace nosiar
 
         glLoadIdentity();
 
-        GLfloat lightKa[4] = { 0.8f, 0.6f, 0.5f, 1.f };
-        GLfloat lightKd[4] = { 0.9f, 0.9f, 0.9f, 1.f };
-        GLfloat lightKs[4] = { 0.9f, 0.9f, 0.9f, 1.f };
-        GLfloat lightPos[4] = { 0.f, 0.f, 10.f, 1.f };
+        GLfloat ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+        GLfloat diffuse[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
+        GLfloat specular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat position[4] = { 0.0f, 0.0f, 10.0f, 1.0f };
 
-        glLightfv(GL_LIGHT0, GL_AMBIENT, lightKa);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightKd);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, lightKs);
-        glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+        glLightfv(GL_LIGHT0, GL_POSITION, position);
 
         glTranslatef(-eye[0], -eye[1], -eye[2]);
 

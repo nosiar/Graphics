@@ -27,10 +27,17 @@ void Viewer::init()
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_SMOOTH);
 
     glLineWidth(3);
+
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[] = { 70.0 };
+    glShadeModel(GL_SMOOTH);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
     texture_back = new nosiar::Texture("texture/space.png", nullptr, nullptr);
     texture_sun = new nosiar::Texture("texture/sun.png", nullptr, nullptr);
@@ -90,6 +97,16 @@ void Viewer::draw()
 {
     draw_background();
 
+    GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat light_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+    GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+
+
     glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     glRotatef(-135.0f, 0.0f, 0.0f, 1.0f);
     glRotatef(-30.0f, 1.0f, -1.0f, 0.0f);
@@ -97,7 +114,11 @@ void Viewer::draw()
     glPushMatrix();
     glRotatef(sun_rotation, 0, 0, 1);
     glBindTexture(GL_TEXTURE_2D, texture_sun->ColorMap());
+
+    glDisable(GL_LIGHTING);
     gluSphere(sphere, 2.0, 20, 20);
+    glEnable(GL_LIGHTING);
+
     glPopMatrix();
 
     float rad = M_PI * earth_revolution / 180;
