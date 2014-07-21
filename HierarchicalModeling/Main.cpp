@@ -1,8 +1,7 @@
-#include <GL/freeglut.h>
 #include "Application.h"
 #include "Viewer.h"
 
-int main(int argc, char* argv[])
+int main()
 {
-    nosiar::Application::initialize(argc, argv, new Viewer);
+    nosiar::Application::initialize("Hierarchical Modeling", new Viewer);
 }

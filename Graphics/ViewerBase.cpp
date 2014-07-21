@@ -1,11 +1,103 @@
 #include "ViewerBase.h"
 
+
 namespace nosiar
 {
     Viewer_base::Viewer_base()
-        : mouse_button{ Mouse_button::none }, modifier{ Modifier::none }
-        , eye({ 0.0f, 0.0f, 30.0f }), rotation_angles({ 0.0f, 0.0f, 0.0f })
+        : alpha{ 210.f }, beta{ -70.f }, zoom{ 2.f }, locked{ false }
     {
+    }
+
+    void Viewer_base::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        if (action != GLFW_PRESS)
+            return;
+
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
+        case GLFW_KEY_SPACE:
+            break;
+        case GLFW_KEY_LEFT:
+            alpha += 5;
+            break;
+        case GLFW_KEY_RIGHT:
+            alpha -= 5;
+            break;
+        case GLFW_KEY_UP:
+            beta -= 5;
+            break;
+        case GLFW_KEY_DOWN:
+            beta += 5;
+            break;
+        case GLFW_KEY_PAGE_UP:
+            zoom -= 0.25f;
+            if (zoom < 0.f)
+                zoom = 0.f;
+            break;
+        case GLFW_KEY_PAGE_DOWN:
+            zoom += 0.25f;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Viewer_base::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+    {
+        _width = width;
+        _height = height;
+
+        float ratio = 1.f;
+
+        if (height > 0)
+            ratio = (float)width / (float)height;
+
+        // Setup viewport
+        glViewport(0, 0, width, height);
+
+        // Change to the projection matrix and set our viewing volume
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(60.0, ratio, 1.0, 1024.0);
+    }
+
+    void Viewer_base::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+    {
+        if (button != GLFW_MOUSE_BUTTON_LEFT)
+            return;
+
+        if (action == GLFW_PRESS)
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            locked = GL_TRUE;
+        }
+        else
+        {
+            locked = GL_FALSE;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+
+    void Viewer_base::cursor_position_callback(GLFWwindow* window, double x, double y)
+    {
+        if (locked)
+        {
+            alpha += (GLfloat)(x - cursorX) / 10.f;
+            beta += (GLfloat)(y - cursorY) / 10.f;
+        }
+
+        cursorX = (int)x;
+        cursorY = (int)y;
+    }
+
+    void Viewer_base::scroll_callback(GLFWwindow* window, double x, double y)
+    {
+        zoom += (float)y / 4.f;
+        if (zoom < 0)
+            zoom = 0;
     }
 
     void Viewer_base::draw_axis()
@@ -25,10 +117,11 @@ namespace nosiar
         glEnd();
     }
 
-    void Viewer_base::display()
+    void Viewer_base::draw(GLFWwindow* window)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
         GLfloat ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -41,92 +134,13 @@ namespace nosiar
         glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
         glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-        glTranslatef(-eye[0], -eye[1], -eye[2]);
+        glTranslatef(0, 0, -zoom);
 
-        //	/* rotates the screen by the angles provided by rot array */
-        glRotatef(rotation_angles[0], 1.0f, 0.0f, 0.0f);
-        glRotatef(rotation_angles[1], 0.0f, 1.0f, 0.0f);
-        glRotatef(rotation_angles[2], 0.0f, 0.0f, 1.0f);
+        glRotatef(beta, 1.0f, 0.0f, 0.0f);
+        glRotatef(alpha, 0.0f, 0.0f, 1.0f);
 
-        draw();
+        draw_scene();
 
-        glutSwapBuffers();
-    }
-
-    void Viewer_base::reshape(int w, int h)
-    {
-        width = w;
-        height = h;
-
-        glViewport(0, 0, w, h);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(45.0f, (GLfloat)w / (GLfloat)h, .1f, 500.0f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-    }
-
-    void Viewer_base::idle()
-    {
-        tick();
-
-        glutPostRedisplay();
-    }
-
-    void Viewer_base::motion(int x, int y)
-    {
-        switch (mouse_button)
-        {
-        case Mouse_button::none:
-            break;
-        case Mouse_button::left:
-            if (modifier == Modifier::none)
-            {
-                rotation_angles[0] -= (prev_mouse_y - y);
-                rotation_angles[1] -= (prev_mouse_x - x);
-                clamp_angles();
-            }
-            else
-            {
-                eye[0] += (prev_mouse_x - x) * 0.01f;
-                eye[1] -= (prev_mouse_y - y) * 0.01f;
-            }
-            break;
-        case Mouse_button::right:
-            eye[2] -= (prev_mouse_y - y) * 0.2f;
-            break;
-        default:
-            break;
-        }
-
-        prev_mouse_x = x;
-        prev_mouse_y = y;
-    }
-
-    void Viewer_base::mouse(int button, int state, int x, int y)
-    {
-        switch (state)
-        {
-        case GLUT_DOWN:
-            prev_mouse_x = x;
-            prev_mouse_y = y;
-
-            mouse_button = static_cast<Mouse_button>(button);
-            modifier = static_cast<Modifier>(glutGetModifiers());
-            break;
-        case GLUT_UP:
-            mouse_button = Mouse_button::none;
-            modifier = Modifier::none;
-            break;
-        default:
-            break;
-        }
-    }
-
-    void Viewer_base::clamp_angles()
-    {
-        for (int i = 0; i < 3; ++i)
-            if (rotation_angles[i] > 360 || rotation_angles[i] < -360)
-                rotation_angles[i] = 0;
+        glfwSwapBuffers(window);
     }
 }

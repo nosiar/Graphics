@@ -7,16 +7,20 @@ namespace nosiar
     class Texture;
 }
 
+class GLUquadric;
+
 class Viewer : public nosiar::Viewer_base
 {
 public:
     Viewer();
     virtual ~Viewer();
     virtual void init();
-    virtual void draw();
-    virtual void tick();
+    virtual void draw_scene();
 
     void draw_background();
+
+private:
+    void calculate();
 
 private:
     nosiar::Texture* texture_back;
@@ -24,7 +28,7 @@ private:
     nosiar::Texture* texture_earth;
     nosiar::Texture* texture_moon;
 
-    GLUquadricObj *sphere;
+    GLUquadric *sphere;
 
     int sun_rotation;
     int earth_rotation;

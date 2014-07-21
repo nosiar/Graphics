@@ -66,7 +66,7 @@ void Viewer::draw_background()
     glPushMatrix();
 
     glLoadIdentity();
-    gluOrtho2D(-width / 2, width / 2, -height / 2, height / 2);
+    gluOrtho2D(-_width / 2, _width / 2, -_height / 2, _height / 2);
     glMatrixMode(GL_MODELVIEW);
 
     glPushMatrix();
@@ -78,10 +78,10 @@ void Viewer::draw_background()
 
     glBindTexture(GL_TEXTURE_2D, texture_back->ColorMap());
     glBegin(GL_QUADS);
-    glTexCoord2i(1, 1); glVertex2i(width / 2, height / 2);
-    glTexCoord2i(1, 0); glVertex2i(width / 2, -height / 2);
-    glTexCoord2i(0, 0); glVertex2i(-width / 2, -height / 2);
-    glTexCoord2i(0, 1); glVertex2i(-width / 2, height / 2);
+    glTexCoord2i(1, 1); glVertex2i(_width / 2, _height / 2);
+    glTexCoord2i(1, 0); glVertex2i(_width / 2, -_height / 2);
+    glTexCoord2i(0, 0); glVertex2i(-_width / 2, -_height / 2);
+    glTexCoord2i(0, 1); glVertex2i(-_width / 2, _height / 2);
     glEnd();
 
     glDepthMask(true);
@@ -93,8 +93,10 @@ void Viewer::draw_background()
     glPopMatrix();
 }
 
-void Viewer::draw()
+void Viewer::draw_scene()
 {
+    calculate();
+
     draw_background();
 
     GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
@@ -143,7 +145,7 @@ void Viewer::draw()
     gluSphere(sphere, 0.4, 20, 20);
 }
 
-void Viewer::tick()
+void Viewer::calculate()
 {
     sun_rotation = (sun_rotation + 1) % 360;
     earth_rotation = (earth_rotation + 10) % 360;

@@ -2,7 +2,8 @@
 
 #include <memory>
 #include <vector>
-#include <GL/freeglut.h>
+#include <GLFW/glfw3.h>
+
 
 #ifdef GRAPHICS_EXPORTS
 #define GRAPHICS_API __declspec(dllexport) 

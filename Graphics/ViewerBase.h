@@ -1,6 +1,7 @@
 #pragma once
 
-#include <GL/freeglut.h>
+#define GLFW_INCLUDE_GLU
+#include <GLFW/glfw3.h>
 #include <array>
 
 #ifdef GRAPHICS_EXPORTS
@@ -20,43 +21,29 @@ namespace nosiar
         virtual ~Viewer_base() {}
 
         virtual void init() {};
-        virtual void draw() {};
-        virtual void tick() {};
+        virtual void draw_scene() {};
 
         void draw_axis();
 
     private:
-        void display();
-        void reshape(int w, int h);
-        void idle();
-        void motion(int x, int y);
-        void mouse(int button, int state, int x, int y);
-        void clamp_angles();
+        void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+        void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+        void cursor_position_callback(GLFWwindow* window, double x, double y);
+        void scroll_callback(GLFWwindow* window, double x, double y);
+        void draw(GLFWwindow* window);
 
     protected:
-        enum class Mouse_button : char {
-            none = -1,
-            left = GLUT_LEFT_BUTTON,
-            right = GLUT_RIGHT_BUTTON,
-        };
 
-        enum class Modifier : char {
-            none = 0,
-            shift = GLUT_ACTIVE_SHIFT,
-            ctrl = GLUT_ACTIVE_CTRL,
-            alt = GLUT_ACTIVE_ALT,
-        };
+        GLfloat alpha, beta;
+        GLfloat zoom;
 
-        Mouse_button mouse_button;
-        Modifier modifier;
+        GLboolean locked;
 
-        int prev_mouse_x;
-        int prev_mouse_y;
-        
-        int width;
-        int height;
+        int cursorX;
+        int cursorY;
 
-        std::array<float, 3> eye;
-        std::array<float, 3> rotation_angles;
+        int _width;
+        int _height;
     };
 }
