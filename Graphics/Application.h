@@ -19,9 +19,10 @@ namespace nosiar
         static void finalize();
 
         /*static void start();
-        static void pause();
+        static void pause();*/
 
-        static int get_time();*/
+        static int get_real_time();
+        static int get_time();
 
         Application() = delete;
         Application(const Application&) = delete;
@@ -38,6 +39,7 @@ namespace nosiar
 
     private:
         static Viewer_base* viewer;
-        int start_time;
+        static long long start_time;
+        static int paused_time;
     };
 }

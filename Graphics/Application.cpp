@@ -1,10 +1,12 @@
 #include "Application.h"
-
 #include "ViewerBase.h"
+#include <chrono>
 
 namespace nosiar
 {
     Viewer_base* Application::viewer;
+    long long Application::start_time = 0;
+    int Application::paused_time = 0;
 
     void Application::initialize(const char* title, Viewer_base* v)
     {
@@ -44,6 +46,8 @@ namespace nosiar
 
         viewer->init();
 
+        start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+
         while (!glfwWindowShouldClose(window))
         {
             viewer->draw(window);
@@ -61,6 +65,18 @@ namespace nosiar
         if (viewer)
             delete viewer;
     }
+
+    int Application::get_real_time()
+    {
+        long long current_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+        return static_cast<int>(current_time - start_time);
+    }
+
+    int Application::get_time()
+    {
+        return get_real_time() - paused_time;
+    }
+
 
     void Application::error_callback(int error, const char* description)
     {
