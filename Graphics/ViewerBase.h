@@ -14,18 +14,13 @@ namespace nosiar
 {
     class GRAPHICS_API Viewer_base
     {
-        friend class Application;
-
     public:
-        Viewer_base();
+        Viewer_base(int width, int height);
         virtual ~Viewer_base() {}
-
-        virtual void init() {};
-        virtual void draw_scene() {};
 
         void draw_axis();
 
-    private:
+        void init();
         void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         void framebuffer_size_callback(GLFWwindow* window, int width, int height);
         void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -33,8 +28,15 @@ namespace nosiar
         void scroll_callback(GLFWwindow* window, double x, double y);
         void draw(GLFWwindow* window);
 
-    protected:
+        int get_width() const { return _width; }
+        int get_height() const { return _height; }
 
+    private:
+        virtual void do_key_callback(GLFWwindow* /*window*/, int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {}
+        virtual void do_init() {}
+        virtual void draw_scene() {}
+
+    protected:
         GLfloat alpha, beta;
         GLfloat zoom;
 

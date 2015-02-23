@@ -12,14 +12,13 @@ class GLUquadric;
 class Viewer : public nosiar::Viewer_base
 {
 public:
-    Viewer();
+    Viewer(int width, int height);
     virtual ~Viewer();
-    virtual void init();
-    virtual void draw_scene();
-
-    void draw_background();
 
 private:
+    virtual void do_init() override;
+    virtual void draw_scene() override;
+    void draw_background();
     void calculate();
 
 private:

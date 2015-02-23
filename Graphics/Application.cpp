@@ -4,7 +4,6 @@
 
 namespace nosiar
 {
-    Application* Application::p;
     Viewer_base* Application::viewer;
 
     void Application::initialize(const char* title, Viewer_base* v)
@@ -19,7 +18,7 @@ namespace nosiar
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
-        GLFWwindow* window = glfwCreateWindow(700, 700, title, NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(viewer->get_width(), viewer->get_height(), title, NULL, NULL);
 
         if (!window)
         {
@@ -52,7 +51,6 @@ namespace nosiar
             glfwPollEvents();
         }
 
-
         finalize();
 
         exit(EXIT_SUCCESS);
@@ -60,12 +58,13 @@ namespace nosiar
 
     void Application::finalize()
     {
-        delete viewer;
+        if (viewer)
+            delete viewer;
     }
 
     void Application::error_callback(int error, const char* description)
     {
-        fprintf(stderr, "Error: %s\n", description);
+        fprintf(stderr, "Error %d: %s\n", error, description);
     }
 
     void Application::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

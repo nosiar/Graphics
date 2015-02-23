@@ -6,7 +6,7 @@
 #include "Viewer.h"
 #include "Texture.h"
 
-Viewer::Viewer()
+Viewer::Viewer(int width, int height) : Viewer_base(width, height)
 {
 }
 
@@ -19,7 +19,7 @@ Viewer::~Viewer()
     gluDeleteQuadric(sphere);
 }
 
-void Viewer::init()
+void Viewer::do_init()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearDepth(1.0f);
@@ -114,7 +114,7 @@ void Viewer::draw_scene()
     glRotatef(-30.0f, 1.0f, -1.0f, 0.0f);
 
     glPushMatrix();
-    glRotatef(sun_rotation, 0, 0, 1);
+    glRotatef(static_cast<float>(sun_rotation), 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_sun->ColorMap());
 
     glDisable(GL_LIGHTING);
@@ -123,14 +123,14 @@ void Viewer::draw_scene()
 
     glPopMatrix();
 
-    float rad = M_PI * earth_revolution / 180;
-    glTranslatef(8 * std::cos(rad), 5 * std::sin(rad), 0);
+    float rad = static_cast<float>(M_PI) * earth_revolution / 180;
+    glTranslatef(8 * std::cos(rad), 5 * std::sin(rad), 0.0f);
     glTranslatef(2, 0, 0);
 
     glPushMatrix();
 
     glRotatef(-23, 1, 0, 0);
-    glRotatef(earth_rotation, 0, 0, 1);
+    glRotatef(static_cast<float>(earth_rotation), 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_earth->ColorMap());
     gluSphere(sphere, 0.8, 44, 44);
 
@@ -138,9 +138,9 @@ void Viewer::draw_scene()
 
     glRotatef(15, 0, 1, 0);
 
-    rad = M_PI * moon_revolution / 180;
-    glTranslatef(2 * std::cos(rad), 2 * std::sin(rad), 0);
-    glRotatef(moon_rotation, 0, 0, 1);
+    rad = static_cast<float>(M_PI) * moon_revolution / 180;
+    glTranslatef(2 * std::cos(rad), 2 * std::sin(rad), 0.0f);
+    glRotatef(static_cast<float>(moon_rotation), 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_moon->ColorMap());
     gluSphere(sphere, 0.4, 20, 20);
 }

@@ -13,13 +13,14 @@
 
 namespace nosiar
 {
-    class GRAPHICS_API Texture
+    class GRAPHICS_API Texture final
     {
     public:
         Texture(const char* color_file,
             const char* displacement_file,
             const char* normal_file,
             double displacement_scale = 1);
+        ~Texture();
 
         double Displacement(double u, double v) const;
 
@@ -37,6 +38,7 @@ namespace nosiar
         double displacement_scale;
         unsigned width, height;
         GLuint color_map, displacement_map, normal_map;
-        std::vector<unsigned char> color_data, displacement_data, normal_data;
+        struct data_;
+        data_* data;
     };
 }

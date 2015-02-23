@@ -1370,7 +1370,7 @@ static unsigned hash_init(Hash* hash, unsigned windowsize)
   /*initialize hash table*/
   for(i = 0; i < HASH_NUM_VALUES; i++) hash->head[i] = -1;
   for(i = 0; i < windowsize; i++) hash->val[i] = -1;
-  for(i = 0; i < windowsize; i++) hash->chain[i] = i; /*same value as index indicates uninitialized*/
+  for(i = 0; i < windowsize; i++) hash->chain[i] = (unsigned short)i; /*same value as index indicates uninitialized*/
 
   return 0;
 }
@@ -1415,7 +1415,7 @@ static unsigned countZeros(const unsigned char* data, size_t size, size_t pos)
 static void updateHashChain(Hash* hash, size_t wpos, int hashval)
 {
   hash->val[wpos] = hashval;
-  if(hash->head[hashval] != -1) hash->chain[wpos] = hash->head[hashval];
+  if(hash->head[hashval] != -1) hash->chain[wpos] = (unsigned short)hash->head[hashval];
   hash->head[hashval] = wpos;
 }
 
@@ -1466,7 +1466,7 @@ static unsigned encodeLZ77(uivector* out, Hash* hash,
     {
       if (numzeros == 0) numzeros = countZeros(in, insize, pos);
       else if (pos + numzeros >= insize || in[pos + numzeros - 1] != 0) numzeros--;
-      hash->zeros[wpos] = numzeros;
+      hash->zeros[wpos] = (unsigned short)numzeros;
     }
     else
     {
@@ -1582,7 +1582,7 @@ static unsigned encodeLZ77(uivector* out, Hash* hash,
         {
           if (numzeros == 0) numzeros = countZeros(in, insize, pos);
           else if (pos + numzeros >= insize || in[pos + numzeros - 1] != 0) numzeros--;
-          hash->zeros[wpos] = numzeros;
+          hash->zeros[wpos] = (unsigned short)numzeros;
         }
         else
         {
@@ -2901,7 +2901,7 @@ static void addColorBits(unsigned char* out, size_t index, unsigned bits, unsign
   unsigned p = index & m;
   in &= (1 << bits) - 1; /*filter out any other bits of the input value*/
   in = in << (bits * (m - p));
-  if(p == 0) out[index * bits / 8] = in;
+  if(p == 0) out[index * bits / 8] = (unsigned char)in;
   else out[index * bits / 8] |= in;
 }
 
@@ -3014,7 +3014,7 @@ static unsigned rgba8ToPixel(unsigned char* out, size_t i,
   {
     int index = color_tree_get(tree, r, g, b, a);
     if(index < 0) return 82; /*color not in palette*/
-    if(mode->bitdepth == 8) out[i] = index;
+    if (mode->bitdepth == 8) out[i] = (unsigned char)index;
     else addColorBits(out, i, mode->bitdepth, index);
   }
   else if(mode->colortype == LCT_GREY_ALPHA)
@@ -3122,7 +3122,7 @@ static unsigned getPixelColorRGBA8(unsigned char* r, unsigned char* g,
       unsigned highest = ((1U << mode->bitdepth) - 1U); /*highest possible value for this bit depth*/
       size_t j = i * mode->bitdepth;
       unsigned value = readBitsFromReversedStream(&j, in, mode->bitdepth);
-      *r = *g = *b = (value * 255) / highest;
+      *r = *g = *b = (unsigned char)((value * 255) / highest);
       if(mode->key_defined && value == mode->key_r) *a = 0;
       else *a = 255;
     }
@@ -3242,7 +3242,7 @@ static unsigned getPixelColorsRGBA8(unsigned char* buffer, size_t numpixels,
       for(i = 0; i < numpixels; i++, buffer += num_channels)
       {
         unsigned value = readBitsFromReversedStream(&j, in, mode->bitdepth);
-        buffer[0] = buffer[1] = buffer[2] = (value * 255) / highest;
+        buffer[0] = buffer[1] = buffer[2] = (unsigned char)((value * 255) / highest);
         if(has_alpha) buffer[3] = mode->key_defined && value == mode->key_r ? 0 : 255;
       }
     }
@@ -3882,9 +3882,9 @@ are only needed to make the paeth calculation correct.
 */
 static unsigned char paethPredictor(short a, short b, short c)
 {
-  short pa = abs(b - c);
-  short pb = abs(a - c);
-  short pc = abs(a + b - c - c);
+  short pa = (short)abs(b - c);
+  short pb = (short)abs(a - c);
+  short pc = (short)abs(a + b - c - c);
 
   if(pc < pa && pc < pb) return (unsigned char)c;
   else if(pb < pa) return (unsigned char)b;
@@ -4912,7 +4912,7 @@ static unsigned addChunk_IHDR(ucvector* out, unsigned w, unsigned h,
   ucvector_push_back(&header, (unsigned char)colortype); /*color type*/
   ucvector_push_back(&header, 0); /*compression method*/
   ucvector_push_back(&header, 0); /*filter method*/
-  ucvector_push_back(&header, interlace_method); /*interlace method*/
+  ucvector_push_back(&header, (unsigned char)interlace_method); /*interlace method*/
 
   error = addChunk(out, "IHDR", header.data, header.size);
   ucvector_cleanup(&header);
@@ -5127,11 +5127,11 @@ static unsigned addChunk_tIME(ucvector* out, const LodePNGTime* time)
   if(!data) return 83; /*alloc fail*/
   data[0] = (unsigned char)(time->year / 256);
   data[1] = (unsigned char)(time->year % 256);
-  data[2] = time->month;
-  data[3] = time->day;
-  data[4] = time->hour;
-  data[5] = time->minute;
-  data[6] = time->second;
+  data[2] = (unsigned char)time->month;
+  data[3] = (unsigned char)time->day;
+  data[4] = (unsigned char)time->hour;
+  data[5] = (unsigned char)time->minute;
+  data[6] = (unsigned char)time->second;
   error = addChunk(out, "tIME", data, 7);
   lodepng_free(data);
   return error;
@@ -5145,7 +5145,7 @@ static unsigned addChunk_pHYs(ucvector* out, const LodePNGInfo* info)
 
   lodepng_add32bitInt(&data, info->phys_x);
   lodepng_add32bitInt(&data, info->phys_y);
-  ucvector_push_back(&data, info->phys_unit);
+  ucvector_push_back(&data, (unsigned char)info->phys_unit);
 
   error = addChunk(out, "pHYs", data.data, data.size);
   ucvector_cleanup(&data);
@@ -5297,7 +5297,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
         /*try the 5 filter types*/
         for(type = 0; type < 5; type++)
         {
-          filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, type);
+          filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, (unsigned char)type);
 
           /*calculate the sum of the result*/
           sum[type] = 0;
@@ -5328,7 +5328,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
         prevline = &in[y * linebytes];
 
         /*now fill the out values*/
-        out[y * (linebytes + 1)] = bestType; /*the first byte of a scanline will be the filter type*/
+        out[y * (linebytes + 1)] = (unsigned char)bestType; /*the first byte of a scanline will be the filter type*/
         for(x = 0; x < linebytes; x++) out[y * (linebytes + 1) + 1 + x] = attempt[bestType].data[x];
       }
     }
@@ -5354,7 +5354,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       /*try the 5 filter types*/
       for(type = 0; type < 5; type++)
       {
-        filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, type);
+        filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, (unsigned char)type);
         for(x = 0; x < 256; x++) count[x] = 0;
         for(x = 0; x < linebytes; x++) count[attempt[type].data[x]]++;
         count[type]++; /*the filter type itself is part of the scanline*/
@@ -5375,7 +5375,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       prevline = &in[y * linebytes];
 
       /*now fill the out values*/
-      out[y * (linebytes + 1)] = bestType; /*the first byte of a scanline will be the filter type*/
+      out[y * (linebytes + 1)] = (unsigned char)bestType; /*the first byte of a scanline will be the filter type*/
       for(x = 0; x < linebytes; x++) out[y * (linebytes + 1) + 1 + x] = attempt[bestType].data[x];
     }
 
@@ -5388,8 +5388,8 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       size_t outindex = (1 + linebytes) * y; /*the extra filterbyte added to each row*/
       size_t inindex = linebytes * y;
       unsigned type = settings->predefined_filters[y];
-      out[outindex] = type; /*filter type byte*/
-      filterScanline(&out[outindex + 1], &in[inindex], prevline, linebytes, bytewidth, type);
+      out[outindex] = (unsigned char)type; /*filter type byte*/
+      filterScanline(&out[outindex + 1], &in[inindex], prevline, linebytes, bytewidth, (unsigned char)type);
       prevline = &in[inindex];
     }
   }
@@ -5425,7 +5425,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
         unsigned testsize = attempt[type].size;
         /*if(testsize > 8) testsize /= 8;*/ /*it already works good enough by testing a part of the row*/
 
-        filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, type);
+        filterScanline(attempt[type].data, &in[y * linebytes], prevline, linebytes, bytewidth, (unsigned char)type);
         size[type] = 0;
         dummy = 0;
         zlib_compress(&dummy, &size[type], attempt[type].data, testsize, &zlibsettings);
@@ -5438,7 +5438,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
         }
       }
       prevline = &in[y * linebytes];
-      out[y * (linebytes + 1)] = bestType; /*the first byte of a scanline will be the filter type*/
+      out[y * (linebytes + 1)] = (unsigned char)bestType; /*the first byte of a scanline will be the filter type*/
       for(x = 0; x < linebytes; x++) out[y * (linebytes + 1) + 1 + x] = attempt[bestType].data[x];
     }
     for(type = 0; type < 5; type++) ucvector_cleanup(&attempt[type]);

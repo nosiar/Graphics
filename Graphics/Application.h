@@ -8,7 +8,6 @@
 
 #include <GLFW/glfw3.h>
 
-
 namespace nosiar
 {
     class Viewer_base;
@@ -18,6 +17,11 @@ namespace nosiar
     public:
         static void initialize(const char* title, Viewer_base* v);
         static void finalize();
+
+        /*static void start();
+        static void pause();
+
+        static int get_time();*/
 
         Application() = delete;
         Application(const Application&) = delete;
@@ -33,7 +37,7 @@ namespace nosiar
         static void scroll_callback(GLFWwindow* window, double x, double y);
 
     private:
-        static Application* p;
         static Viewer_base* viewer;
+        int start_time;
     };
 }

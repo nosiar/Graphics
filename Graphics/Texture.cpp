@@ -5,19 +5,27 @@
 
 namespace nosiar
 {
+    struct Texture::data_
+    {
+        std::vector<unsigned char> color, displacement, normal;
+    };
+
     Texture::Texture(const char* color_file, const char* displacement_file,
         const char* normal_file, double displacement_scale/*=1*/)
-        : displacement_scale(displacement_scale)
+        : displacement_scale(displacement_scale), data(new data_)
     {
         if (color_file)
-            init_texture(&color_map, color_data, color_file);
+            init_texture(&color_map, data->color, color_file);
         if (displacement_file)
-            init_texture(&displacement_map, displacement_data, displacement_file);
+            init_texture(&displacement_map, data->displacement, displacement_file);
         if (normal_file)
-            init_texture(&normal_map, normal_data, normal_file);
+            init_texture(&normal_map, data->normal, normal_file);
     }
 
-
+    Texture::~Texture()
+    {
+        delete data;
+    }
 
     void Texture::init_texture(GLuint *tex, std::vector<unsigned char>& data, const char* filename)
     {
@@ -48,9 +56,9 @@ namespace nosiar
         std::vector<unsigned char> data(width*height * 4);
         std::vector<unsigned char> temp(width*height*depth);
         fin.read((char*)&temp[0], width*height*depth);
-        for (int j = 0; j < height; ++j)
+        for (unsigned int j = 0; j < height; ++j)
         {
-            for (int i = 0; i < width; ++i)
+            for (unsigned int i = 0; i < width; ++i)
             {
                 data[4 * (j*width + i)] = temp[depth*(j*width + i) + 2];
                 data[4 * (j*width + i) + 1] = temp[depth*(j*width + i) + 1];
@@ -92,7 +100,7 @@ namespace nosiar
         auto e = temp.end();
         auto dest = std::back_inserter(data);
 
-        for (int i = 0; i < height - 1; ++i)
+        for (unsigned int i = 0; i < height - 1; ++i)
         {
             std::copy(b, e, dest);
 
@@ -117,15 +125,15 @@ namespace nosiar
         double px = u * (width - 1);
         double py = v * (height - 1);
 
-        int x = (int)px;
-        int y = (int)py;
-        int xn = x < (width - 1) ? x + 1 : x;
-        int yn = y < (height - 1) ? y + 1 : y;
+        unsigned int x = static_cast<unsigned int>(px);
+        unsigned int y = static_cast<unsigned int>(py);
+        unsigned int xn = x < (width - 1) ? x + 1 : x;
+        unsigned int yn = y < (height - 1) ? y + 1 : y;
 
-        double d00 = (double)displacement_data[4 * (width*y + x)] / 255;
-        double d01 = (double)displacement_data[4 * (width*y + xn)] / 255;
-        double d10 = (double)displacement_data[4 * (width*yn + x)] / 255;
-        double d11 = (double)displacement_data[4 * (width*yn + xn)] / 255;
+        double d00 = static_cast<double>(data->displacement[4 * (width*y + x)]) / 255;
+        double d01 = static_cast<double>(data->displacement[4 * (width*y + xn)]) / 255;
+        double d10 = static_cast<double>(data->displacement[4 * (width*yn + x)]) / 255;
+        double d11 = static_cast<double>(data->displacement[4 * (width*yn + xn)]) / 255;
 
         double xFractionalPart = px - x;
         double yFractionalPart = py - y;

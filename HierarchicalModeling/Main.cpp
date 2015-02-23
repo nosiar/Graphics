@@ -3,5 +3,5 @@
 
 int main()
 {
-    nosiar::Application::initialize("Hierarchical Modeling", new Viewer);
+    nosiar::Application::initialize("Hierarchical Modeling", new Viewer(700, 700));
 }

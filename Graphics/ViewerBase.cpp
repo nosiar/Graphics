@@ -1,11 +1,16 @@
 #include "ViewerBase.h"
-
+#include<iostream>
 
 namespace nosiar
 {
-    Viewer_base::Viewer_base()
-        : alpha{ 210.f }, beta{ -70.f }, zoom{ 2.f }, locked{ false }
+    Viewer_base::Viewer_base(int width, int height) 
+        : _width(width), _height(height), alpha{ 210.f }, beta{ -70.f }, zoom{ 20.f }, locked{ false }
     {
+    }
+
+    void Viewer_base::init()
+    {
+        do_init();
     }
 
     void Viewer_base::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -17,8 +22,6 @@ namespace nosiar
         {
         case GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GL_TRUE);
-            break;
-        case GLFW_KEY_SPACE:
             break;
         case GLFW_KEY_LEFT:
             alpha += 5;
@@ -41,11 +44,12 @@ namespace nosiar
             zoom += 0.25f;
             break;
         default:
+            do_key_callback(window, key, scancode, action, mods);
             break;
         }
     }
 
-    void Viewer_base::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+    void Viewer_base::framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height)
     {
         _width = width;
         _height = height;
@@ -64,7 +68,7 @@ namespace nosiar
         gluPerspective(60.0, ratio, 1.0, 1024.0);
     }
 
-    void Viewer_base::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+    void Viewer_base::mouse_button_callback(GLFWwindow* window, int button, int action, int /*mods*/)
     {
         if (button != GLFW_MOUSE_BUTTON_LEFT)
             return;
@@ -81,19 +85,19 @@ namespace nosiar
         }
     }
 
-    void Viewer_base::cursor_position_callback(GLFWwindow* window, double x, double y)
+    void Viewer_base::cursor_position_callback(GLFWwindow* /*window*/, double x, double y)
     {
         if (locked)
         {
-            alpha += (GLfloat)(x - cursorX) / 10.f;
-            beta += (GLfloat)(y - cursorY) / 10.f;
+            alpha += (GLfloat)(x - cursorX) / 5.f;
+            beta += (GLfloat)(y - cursorY) / 5.f;
         }
 
         cursorX = (int)x;
         cursorY = (int)y;
     }
 
-    void Viewer_base::scroll_callback(GLFWwindow* window, double x, double y)
+    void Viewer_base::scroll_callback(GLFWwindow* /*window*/, double /*x*/, double y)
     {
         zoom += (float)y / 4.f;
         if (zoom < 0)
