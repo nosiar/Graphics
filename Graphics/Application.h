@@ -10,12 +10,12 @@
 
 namespace nosiar
 {
-    class Viewer_base;
+    class ViewerBase;
 
     class GRAPHICS_API Application
     {
     public:
-        static void initialize(const char* title, Viewer_base* v);
+        static void initialize(const char* title, ViewerBase* v);
         static void finalize();
 
         /*static void start();
@@ -38,7 +38,7 @@ namespace nosiar
         static void scroll_callback(GLFWwindow* window, double x, double y);
 
     private:
-        static Viewer_base* viewer;
+        static ViewerBase* viewer;
         static long long start_time;
         static int paused_time;
     };

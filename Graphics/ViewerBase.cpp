@@ -3,108 +3,50 @@
 
 namespace nosiar
 {
-    Viewer_base::Viewer_base(int width, int height) 
-        : _width(width), _height(height), alpha{ 210.f }, beta{ -70.f }, zoom{ 20.f }, locked{ false }
+    ViewerBase::ViewerBase(int width, int height)
+        : width_(width), height_(height)
     {
     }
 
-    void Viewer_base::init()
+    void ViewerBase::initialize()
     {
-        do_init();
+        do_initialize();
     }
 
-    void Viewer_base::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void ViewerBase::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        if (action != GLFW_PRESS)
-            return;
-
-        switch (key)
-        {
-        case GLFW_KEY_ESCAPE:
-            glfwSetWindowShouldClose(window, GL_TRUE);
-            break;
-        case GLFW_KEY_LEFT:
-            alpha += 5;
-            break;
-        case GLFW_KEY_RIGHT:
-            alpha -= 5;
-            break;
-        case GLFW_KEY_UP:
-            beta -= 5;
-            break;
-        case GLFW_KEY_DOWN:
-            beta += 5;
-            break;
-        case GLFW_KEY_PAGE_UP:
-            zoom -= 0.25f;
-            if (zoom < 0.f)
-                zoom = 0.f;
-            break;
-        case GLFW_KEY_PAGE_DOWN:
-            zoom += 0.25f;
-            break;
-        default:
-            do_key_callback(window, key, scancode, action, mods);
-            break;
-        }
+        do_key_callback(window, key, scancode, action, mods);
     }
 
-    void Viewer_base::framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height)
+    void ViewerBase::framebuffer_size_callback(GLFWwindow* window, int width, int height)
     {
-        _width = width;
-        _height = height;
+        width_ = width;
+        height_ = height;
 
-        float ratio = 1.f;
-
-        if (height > 0)
-            ratio = (float)width / (float)height;
-
-        // Setup viewport
-        glViewport(0, 0, width, height);
-
-        // Change to the projection matrix and set our viewing volume
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(60.0, ratio, 1.0, 1024.0);
+        do_framebuffer_size_callback(window);
     }
 
-    void Viewer_base::mouse_button_callback(GLFWwindow* window, int button, int action, int /*mods*/)
+    void ViewerBase::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     {
-        if (button != GLFW_MOUSE_BUTTON_LEFT)
-            return;
-
-        if (action == GLFW_PRESS)
-        {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            locked = GL_TRUE;
-        }
-        else
-        {
-            locked = GL_FALSE;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
+        do_mouse_button_callback(window, button, action, mods);
     }
 
-    void Viewer_base::cursor_position_callback(GLFWwindow* /*window*/, double x, double y)
+    void ViewerBase::cursor_position_callback(GLFWwindow* window, double x, double y)
     {
-        if (locked)
-        {
-            alpha += (GLfloat)(x - cursorX) / 5.f;
-            beta += (GLfloat)(y - cursorY) / 5.f;
-        }
+        prev_cursor_x = cursor_x;
+        prev_cursor_y = cursor_y;
+        cursor_x = static_cast<int>(x);
+        cursor_y = static_cast<int>(y);
 
-        cursorX = (int)x;
-        cursorY = (int)y;
+        do_cursor_position_callback(window);
     }
 
-    void Viewer_base::scroll_callback(GLFWwindow* /*window*/, double /*x*/, double y)
+    void ViewerBase::scroll_callback(GLFWwindow* window, double x, double y)
     {
-        zoom += (float)y / 4.f;
-        if (zoom < 0)
-            zoom = 0;
+        do_scroll_callback(window, x, y);
     }
 
-    void Viewer_base::draw_axis()
+    void ViewerBase::draw_axis()
     {
         glBegin(GL_LINES);
         glColor3f(1.0f, 0.0f, 0.0f);
@@ -121,30 +63,18 @@ namespace nosiar
         glEnd();
     }
 
-    void Viewer_base::draw(GLFWwindow* window)
+    void ViewerBase::draw_grid()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+    }
 
-        GLfloat ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-        GLfloat diffuse[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
-        GLfloat specular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        GLfloat position[4] = { 0.0f, 0.0f, 10.0f, 1.0f };
+    void ViewerBase::update()
+    {
+        do_update();
+    }
 
-        glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-        glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-        glTranslatef(0, 0, -zoom);
-
-        glRotatef(beta, 1.0f, 0.0f, 0.0f);
-        glRotatef(alpha, 0.0f, 0.0f, 1.0f);
-
-        draw_scene();
-
-        glfwSwapBuffers(window);
+    void ViewerBase::draw(GLFWwindow* window)
+    {
+        do_draw(window);
     }
 }

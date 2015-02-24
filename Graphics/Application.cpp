@@ -4,11 +4,11 @@
 
 namespace nosiar
 {
-    Viewer_base* Application::viewer;
+    ViewerBase* Application::viewer;
     long long Application::start_time = 0;
     int Application::paused_time = 0;
 
-    void Application::initialize(const char* title, Viewer_base* v)
+    void Application::initialize(const char* title, ViewerBase* v)
     {
         viewer = v;
 
@@ -20,7 +20,7 @@ namespace nosiar
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
-        GLFWwindow* window = glfwCreateWindow(viewer->get_width(), viewer->get_height(), title, NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(viewer->width(), viewer->height(), title, NULL, NULL);
 
         if (!window)
         {
@@ -44,12 +44,13 @@ namespace nosiar
         glfwGetFramebufferSize(window, &w, &h);
         framebuffer_size_callback(window, w, h);
 
-        viewer->init();
+        viewer->initialize();
 
         start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
         while (!glfwWindowShouldClose(window))
         {
+            viewer->update();
             viewer->draw(window);
 
             glfwPollEvents();
