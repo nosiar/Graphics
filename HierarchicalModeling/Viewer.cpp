@@ -6,7 +6,7 @@
 #include "Viewer.h"
 #include "Texture.h"
 
-Viewer::Viewer(int width, int height) : Viewer_base(width, height)
+Viewer::Viewer(int width, int height) : ManipulatedViewer(width, height)
 {
 }
 
@@ -19,7 +19,7 @@ Viewer::~Viewer()
     gluDeleteQuadric(sphere);
 }
 
-void Viewer::do_init()
+void Viewer::do_initialize()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearDepth(1.0f);
@@ -66,7 +66,7 @@ void Viewer::draw_background()
     glPushMatrix();
 
     glLoadIdentity();
-    gluOrtho2D(-_width / 2, _width / 2, -_height / 2, _height / 2);
+    gluOrtho2D(-width_ / 2, width_ / 2, -height_ / 2, height_ / 2);
     glMatrixMode(GL_MODELVIEW);
 
     glPushMatrix();
@@ -78,10 +78,10 @@ void Viewer::draw_background()
 
     glBindTexture(GL_TEXTURE_2D, texture_back->ColorMap());
     glBegin(GL_QUADS);
-    glTexCoord2i(1, 1); glVertex2i(_width / 2, _height / 2);
-    glTexCoord2i(1, 0); glVertex2i(_width / 2, -_height / 2);
-    glTexCoord2i(0, 0); glVertex2i(-_width / 2, -_height / 2);
-    glTexCoord2i(0, 1); glVertex2i(-_width / 2, _height / 2);
+    glTexCoord2i(1, 1); glVertex2i(width_ / 2, height_ / 2);
+    glTexCoord2i(1, 0); glVertex2i(width_ / 2, -height_ / 2);
+    glTexCoord2i(0, 0); glVertex2i(-width_ / 2, -height_ / 2);
+    glTexCoord2i(0, 1); glVertex2i(-width_ / 2, height_ / 2);
     glEnd();
 
     glDepthMask(true);

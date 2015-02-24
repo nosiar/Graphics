@@ -4,9 +4,9 @@
 
 namespace nosiar
 {
-    Viewer_base* Application::viewer;
+    ViewerBase* Application::viewer;
 
-    void Application::initialize(const char* title, Viewer_base* v)
+    void Application::initialize(const char* title, ViewerBase* v)
     {
         viewer = v;
 
@@ -18,7 +18,7 @@ namespace nosiar
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
-        GLFWwindow* window = glfwCreateWindow(viewer->get_width(), viewer->get_height(), title, NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(viewer->width(), viewer->height(), title, NULL, NULL);
 
         if (!window)
         {
@@ -42,7 +42,7 @@ namespace nosiar
         glfwGetFramebufferSize(window, &w, &h);
         framebuffer_size_callback(window, w, h);
 
-        viewer->init();
+        viewer->initialize();
 
         while (!glfwWindowShouldClose(window))
         {

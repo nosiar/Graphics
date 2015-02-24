@@ -12,15 +12,15 @@
 
 namespace nosiar
 {
-    class GRAPHICS_API Viewer_base
+    class GRAPHICS_API ViewerBase
     {
     public:
-        Viewer_base(int width, int height);
-        virtual ~Viewer_base() {}
+        ViewerBase(int width, int height);
+        virtual ~ViewerBase() {}
 
         void draw_axis();
 
-        void init();
+        void initialize();
         void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         void framebuffer_size_callback(GLFWwindow* window, int width, int height);
         void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -28,12 +28,16 @@ namespace nosiar
         void scroll_callback(GLFWwindow* window, double x, double y);
         void draw(GLFWwindow* window);
 
-        int get_width() const { return _width; }
-        int get_height() const { return _height; }
+        int width() const { return width_; }
+        int height() const { return height_; }
 
     private:
         virtual void do_key_callback(GLFWwindow* /*window*/, int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {}
-        virtual void do_init() {}
+        virtual void do_framebuffer_size_callback(GLFWwindow* /*window*/, int /*width*/, int /*height*/) {}
+        virtual void do_mouse_button_callback(GLFWwindow* /*window*/, int /*button*/, int /*action*/, int /*mods*/) {}
+        virtual void do_cursor_position_callback(GLFWwindow* /*window*/, double /*x*/, double /*y*/) {}
+        virtual void do_scroll_callback(GLFWwindow* /*window*/, double /*x*/, double /*y*/) {}
+        virtual void do_initialize() {}
         virtual void draw_scene() {}
 
     protected:
@@ -45,7 +49,7 @@ namespace nosiar
         int cursorX;
         int cursorY;
 
-        int _width;
-        int _height;
+        int width_;
+        int height_;
     };
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ViewerBase.h"
+#include "ManipulatedViewer.h"
 
 namespace nosiar
 {
@@ -9,14 +9,14 @@ namespace nosiar
 
 class GLUquadric;
 
-class Viewer : public nosiar::Viewer_base
+class Viewer : public nosiar::ManipulatedViewer
 {
 public:
     Viewer(int width, int height);
     virtual ~Viewer();
 
 private:
-    virtual void do_init() override;
+    virtual void do_initialize() override;
     virtual void draw_scene() override;
     void draw_background();
     void calculate();
