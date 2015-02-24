@@ -4,11 +4,12 @@
 
 namespace nosiar
 {
-    ViewerBase* Application::viewer;
+    ViewerBase* Application::viewer = nullptr;
     long long Application::start_time = 0;
     int Application::paused_time = 0;
+    GLFWwindow*  Application::window_ = nullptr;
 
-    void Application::initialize(const char* title, ViewerBase* v)
+    void Application::create(const char* title, ViewerBase* v)
     {
         viewer = v;
 
@@ -20,45 +21,60 @@ namespace nosiar
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
-        GLFWwindow* window = glfwCreateWindow(viewer->width(), viewer->height(), title, NULL, NULL);
+        window_ = glfwCreateWindow(viewer->width(), viewer->height(), title, NULL, NULL);
 
-        if (!window)
+        if (!window_)
         {
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
 
-        glfwSetKeyCallback(window, key_callback);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-        glfwSetMouseButtonCallback(window, mouse_button_callback);
-        glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetScrollCallback(window, scroll_callback);
+        glfwSetKeyCallback(window_, key_callback);
+        glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback);
+        glfwSetMouseButtonCallback(window_, mouse_button_callback);
+        glfwSetCursorPosCallback(window_, cursor_position_callback);
+        glfwSetScrollCallback(window_, scroll_callback);
 
-        glfwSetWindowPos(window, 250, 250);
-        glfwShowWindow(window);
+        // TODO: add variable
+        glfwSetWindowPos(window_, 250, 250);
+        glfwShowWindow(window_);
 
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(window_);
         glfwSwapInterval(1);
-
+        int ii = sizeof window_;
+        ii = (ii);
         int w, h;
-        glfwGetFramebufferSize(window, &w, &h);
-        framebuffer_size_callback(window, w, h);
+        glfwGetFramebufferSize(window_, &w, &h);
+        framebuffer_size_callback(window_, w, h);
 
         viewer->initialize();
 
         start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
-        while (!glfwWindowShouldClose(window))
-        {
-            viewer->update();
-            viewer->draw(window);
-
-            glfwPollEvents();
-        }
+        loop();
 
         finalize();
 
         exit(EXIT_SUCCESS);
+    }
+
+    void Application::loop()
+    {
+        int prev_time = get_time();
+
+        while (!glfwWindowShouldClose(window_))
+        {
+            int current_time = get_time();
+            while (current_time - prev_time > 20)
+            {
+                viewer->update(current_time - prev_time);
+                viewer->draw(window_);
+
+                prev_time = current_time;
+
+                glfwPollEvents();
+            }
+        }
     }
 
     void Application::finalize()

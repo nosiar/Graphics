@@ -15,8 +15,7 @@ namespace nosiar
     class GRAPHICS_API Application
     {
     public:
-        static void initialize(const char* title, ViewerBase* v);
-        static void finalize();
+        static void create(const char* title, ViewerBase* v);
 
         /*static void start();
         static void pause();*/
@@ -30,6 +29,9 @@ namespace nosiar
         Application& operator=(const Application&) = delete;
 
     private:
+        static void finalize();
+        static void loop();
+
         static void error_callback(int error, const char* description);
         static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -38,6 +40,7 @@ namespace nosiar
         static void scroll_callback(GLFWwindow* window, double x, double y);
 
     private:
+        static GLFWwindow* window_;
         static ViewerBase* viewer;
         static long long start_time;
         static int paused_time;

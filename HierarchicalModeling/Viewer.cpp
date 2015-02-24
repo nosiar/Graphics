@@ -19,6 +19,13 @@ Viewer::~Viewer()
     gluDeleteQuadric(sphere);
 }
 
+const float Viewer::sun_rot_per_tick = 360.0f / 20 / 24;
+const float Viewer::earth_rot_per_tick = 360.0f / 20;
+const float Viewer::moon_rot_per_tick = 360.0f / 20 / 27;
+
+const float Viewer::earth_rev_per_tick = 360.0f / 20 / 365;
+const float Viewer::moon_rev_per_tick = 360.0f / 20 / 27;
+
 void Viewer::do_initialize()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -50,13 +57,12 @@ void Viewer::do_initialize()
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
 
-    sun_rotation = 0;
-    earth_rotation = 0;
-    moon_rotation = 0;
+    sun_rotation = 0.0f;
+    earth_rotation = 0.0f;
+    moon_rotation = 0.0f;
 
-    sun_revolution = 0;
-    earth_revolution = 0;
-    moon_revolution = 0;
+    earth_revolution = 0.0f;
+    moon_revolution = 0.0f;
 }
 
 void Viewer::draw_background()
@@ -93,16 +99,16 @@ void Viewer::draw_background()
     glPopMatrix();
 }
 
-void Viewer::do_update()
+void Viewer::do_update(int elapsed_time)
 {
-    sun_rotation = (sun_rotation + 1) % 360;
-    earth_rotation = (earth_rotation + 10) % 360;
-    moon_rotation = (moon_rotation + 13) % 360;
+    sun_rotation = fmod(sun_rotation + elapsed_time*sun_rot_per_tick, 360.0f);
+    earth_rotation = fmod(earth_rotation + elapsed_time*earth_rot_per_tick, 360.0f);
+    moon_rotation = fmod(moon_rotation + elapsed_time*moon_rot_per_tick, 360.0f);
 
-    earth_revolution = (earth_revolution + 5) % 360;
-    moon_revolution = (moon_revolution + 13) % 360;
+    earth_revolution = fmod(earth_revolution + elapsed_time*earth_rev_per_tick, 360.0f);
+    moon_revolution = fmod(moon_revolution + elapsed_time*moon_rev_per_tick, 360.0f);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
 void Viewer::draw_scene()
@@ -123,7 +129,7 @@ void Viewer::draw_scene()
     glRotatef(-30.0f, 1.0f, -1.0f, 0.0f);
 
     glPushMatrix();
-    glRotatef(static_cast<float>(sun_rotation), 0.0f, 0.0f, 1.0f);
+    glRotatef(sun_rotation, 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_sun->ColorMap());
 
     glDisable(GL_LIGHTING);
@@ -139,7 +145,7 @@ void Viewer::draw_scene()
     glPushMatrix();
 
     glRotatef(-23, 1, 0, 0);
-    glRotatef(static_cast<float>(earth_rotation), 0.0f, 0.0f, 1.0f);
+    glRotatef(earth_rotation, 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_earth->ColorMap());
     gluSphere(sphere, 0.8, 44, 44);
 
@@ -149,7 +155,7 @@ void Viewer::draw_scene()
 
     rad = static_cast<float>(M_PI) * moon_revolution / 180;
     glTranslatef(2 * std::cos(rad), 2 * std::sin(rad), 0.0f);
-    glRotatef(static_cast<float>(moon_rotation), 0.0f, 0.0f, 1.0f);
+    glRotatef(moon_rotation, 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_moon->ColorMap());
     gluSphere(sphere, 0.4, 20, 20);
 }

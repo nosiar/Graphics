@@ -96,7 +96,7 @@ namespace nosiar
             zoom = 0;
     }
 
-    void ManipulatedViewer::do_draw(GLFWwindow* window)
+    void ManipulatedViewer::do_draw()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -119,7 +119,5 @@ namespace nosiar
         glRotatef(alpha, 0.0f, 0.0f, 1.0f);
 
         draw_scene();
-
-        glfwSwapBuffers(window);
     }
 }

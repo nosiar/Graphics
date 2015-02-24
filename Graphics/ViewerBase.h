@@ -25,7 +25,7 @@ namespace nosiar
         void cursor_position_callback(GLFWwindow* window, double x, double y);
         void scroll_callback(GLFWwindow* window, double x, double y);
 
-        void update();
+        void update(int elapsed_time);
         void draw(GLFWwindow* window);
 
         void draw_axis();
@@ -42,8 +42,8 @@ namespace nosiar
         virtual void do_scroll_callback(GLFWwindow* /*window*/, double /*x*/, double /*y*/) {}
         virtual void do_initialize() {}
 
-        virtual void do_update() {}
-        virtual void do_draw(GLFWwindow* /*window*/) {}
+        virtual void do_update(int /*elapsed_time*/) {}
+        virtual void do_draw() {}
 
     protected:
         int cursor_x;

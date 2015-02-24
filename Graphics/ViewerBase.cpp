@@ -68,13 +68,15 @@ namespace nosiar
 
     }
 
-    void ViewerBase::update()
+    void ViewerBase::update(int elapsed_time)
     {
-        do_update();
+        do_update(elapsed_time);
     }
 
     void ViewerBase::draw(GLFWwindow* window)
     {
-        do_draw(window);
+        do_draw();
+
+        glfwSwapBuffers(window);
     }
 }

@@ -17,7 +17,7 @@ public:
 
 private:
     virtual void do_initialize() override;
-    virtual void do_update() override;
+    virtual void do_update(int elapsed_time) override;
     virtual void draw_scene() override;
     void draw_background();
 
@@ -29,11 +29,17 @@ private:
 
     GLUquadric *sphere;
 
-    int sun_rotation;
-    int earth_rotation;
-    int moon_rotation;
+    static const float sun_rot_per_tick;
+    static const float earth_rot_per_tick;
+    static const float moon_rot_per_tick;
 
-    int sun_revolution;
-    int earth_revolution;
-    int moon_revolution;
+    static const float earth_rev_per_tick;
+    static const float moon_rev_per_tick;
+
+    float sun_rotation = 0.0f;
+    float earth_rotation = 0.0f;
+    float moon_rotation = 0.0f;
+
+    float earth_revolution = 0.0f;
+    float moon_revolution = 0.0f;
 };
