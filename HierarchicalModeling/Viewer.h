@@ -17,9 +17,9 @@ public:
 
 private:
     virtual void do_initialize() override;
+    virtual void do_update() override;
     virtual void draw_scene() override;
     void draw_background();
-    void calculate();
 
 private:
     nosiar::Texture* texture_back;

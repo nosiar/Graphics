@@ -46,6 +46,7 @@ namespace nosiar
 
         while (!glfwWindowShouldClose(window))
         {
+            viewer->update();
             viewer->draw(window);
 
             glfwPollEvents();

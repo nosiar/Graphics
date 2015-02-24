@@ -52,7 +52,7 @@ namespace nosiar
         float ratio = 1.f;
 
         if (height_ > 0)
-            ratio = (float)width_ / (float)height_;
+            ratio = static_cast<float>(width_) / height_;
 
         // Setup viewport
         glViewport(0, 0, width_, height_);

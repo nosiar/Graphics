@@ -93,10 +93,20 @@ void Viewer::draw_background()
     glPopMatrix();
 }
 
+void Viewer::do_update()
+{
+    sun_rotation = (sun_rotation + 1) % 360;
+    earth_rotation = (earth_rotation + 10) % 360;
+    moon_rotation = (moon_rotation + 13) % 360;
+
+    earth_revolution = (earth_revolution + 5) % 360;
+    moon_revolution = (moon_revolution + 13) % 360;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+}
+
 void Viewer::draw_scene()
 {
-    calculate();
-
     draw_background();
 
     GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
@@ -107,7 +117,6 @@ void Viewer::draw_scene()
     glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-
 
     glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     glRotatef(-135.0f, 0.0f, 0.0f, 1.0f);
@@ -143,17 +152,4 @@ void Viewer::draw_scene()
     glRotatef(static_cast<float>(moon_rotation), 0.0f, 0.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, texture_moon->ColorMap());
     gluSphere(sphere, 0.4, 20, 20);
-}
-
-void Viewer::calculate()
-{
-    sun_rotation = (sun_rotation + 1) % 360;
-    earth_rotation = (earth_rotation + 10) % 360;
-    moon_rotation = (moon_rotation + 13) % 360;
-
-    earth_revolution = (earth_revolution + 5) % 360;
-    moon_revolution = (moon_revolution + 13) % 360;
-
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
