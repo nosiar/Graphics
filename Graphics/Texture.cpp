@@ -95,7 +95,7 @@ namespace nosiar
 
         data.reserve(temp.size());
 
-        int size = temp.size() / height;
+        int size = static_cast<int>(temp.size()) / height;
 
         auto b = temp.end() - size;
         auto e = temp.end();
