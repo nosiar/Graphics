@@ -24,10 +24,10 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lodepng.cpp">
+    <ClCompile Include="ManipulatedViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ManipulatedViewer.cpp">
+    <ClCompile Include="lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,10 +41,10 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lodepng.h">
+    <ClInclude Include="ManipulatedViewer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ManipulatedViewer.h">
+    <ClInclude Include="lodepng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

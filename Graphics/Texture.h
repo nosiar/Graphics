@@ -39,6 +39,6 @@ namespace nosiar
         unsigned width, height;
         GLuint color_map, displacement_map, normal_map;
         struct data_;
-        data_* data;
+        data_* _data;
     };
 }

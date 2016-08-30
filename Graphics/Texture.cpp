@@ -1,7 +1,8 @@
 #include "Texture.h"
-#include "Lodepng.h"
+#include "lodepng.h"
 #include <fstream>
 #include <iostream>
+#include <iterator>
 
 namespace nosiar
 {
@@ -12,19 +13,19 @@ namespace nosiar
 
     Texture::Texture(const char* color_file, const char* displacement_file,
         const char* normal_file, double displacement_scale/*=1*/)
-        : displacement_scale(displacement_scale), data(new data_)
+        : displacement_scale(displacement_scale), _data(new data_)
     {
         if (color_file)
-            init_texture(&color_map, data->color, color_file);
+            init_texture(&color_map, _data->color, color_file);
         if (displacement_file)
-            init_texture(&displacement_map, data->displacement, displacement_file);
+            init_texture(&displacement_map, _data->displacement, displacement_file);
         if (normal_file)
-            init_texture(&normal_map, data->normal, normal_file);
+            init_texture(&normal_map, _data->normal, normal_file);
     }
 
     Texture::~Texture()
     {
-        delete data;
+        delete _data;
     }
 
     void Texture::init_texture(GLuint *tex, std::vector<unsigned char>& data, const char* filename)
@@ -130,10 +131,10 @@ namespace nosiar
         unsigned int xn = x < (width - 1) ? x + 1 : x;
         unsigned int yn = y < (height - 1) ? y + 1 : y;
 
-        double d00 = static_cast<double>(data->displacement[4 * (width*y + x)]) / 255;
-        double d01 = static_cast<double>(data->displacement[4 * (width*y + xn)]) / 255;
-        double d10 = static_cast<double>(data->displacement[4 * (width*yn + x)]) / 255;
-        double d11 = static_cast<double>(data->displacement[4 * (width*yn + xn)]) / 255;
+        double d00 = static_cast<double>(_data->displacement[4 * (width*y + x)]) / 255;
+        double d01 = static_cast<double>(_data->displacement[4 * (width*y + xn)]) / 255;
+        double d10 = static_cast<double>(_data->displacement[4 * (width*yn + x)]) / 255;
+        double d11 = static_cast<double>(_data->displacement[4 * (width*yn + xn)]) / 255;
 
         double xFractionalPart = px - x;
         double yFractionalPart = py - y;
